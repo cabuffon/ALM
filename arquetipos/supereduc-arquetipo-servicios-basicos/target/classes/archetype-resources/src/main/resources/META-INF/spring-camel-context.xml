@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+        
+    <bean id="validaEntrada" class="cl.supereduc.iesb.arquetipo.negocio.rs.ValidaEntrada"/>     
+	
+
+	<!-- Data Source componente Bean -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="java:jboss/datasources/${jndiDS}"/>
+	</bean>
+	
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+	  <property name="dataSource" ref="dataSource"/>
+	</bean>
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring" id="${artifactId}">
+	
+	<propertyPlaceholder id="placeholder" location="classpath:querysArquetipoBasico.properties"/>
+	
+	<onException>
+		    <exception>java.sql.SQLException</exception>
+		    <handled><simple>true</simple></handled>
+		    <setHeader headerName="codeError"><constant>400</constant></setHeader>
+		    <setHeader headerName="messageError"><simple>Bad Request - ${exception.message}</simple></setHeader>
+		    <to uri="velocity:velocity/sqlException400-json.vm"/>
+	</onException>
+
+#if ( $operacion == "SELECTLIST")
+		<!-- 	VM de consulta para una lista de registros	 -->
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />	
+			
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:{{sql.respuestaLista}}" />
+
+					<choice>
+						<when>
+							<simple>${body.size} == 0</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/listaRespuesta-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+#end
+#if ( $operacion == "SELECTONE")	
+		<!-- 	VM de consulta para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:{{sql.respuesta}}?outputType=SelectOne" />
+
+					<choice>
+						<when>
+							<simple>${body} == null</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/respuesta-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>			
+#end	
+#if ( $operacion == "INSERT")
+		<!-- 	VM de inserción, metodo post para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />	
+	
+			<log message="Proyecto Negocio INSERT==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.param1}"></log>
+			
+			<setHeader headerName="param1"><jsonpath>$.object.param1</jsonpath></setHeader>
+			<setHeader headerName="param2"><jsonpath>$.object.param2</jsonpath></setHeader>
+			<setHeader headerName="param3"><jsonpath>$.object.param3</jsonpath></setHeader>
+			<log message="***********jsonvalue: ${headers.jsonvalue}"></log>
+			
+		    <to uri="sql:{{sql.inserta}}" />
+		    
+		    <to uri="velocity:velocity/response-valid.vm"/>
+		    <setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		    
+		</route>	
+
+#end
+#if ( $operacion == "UPDATE")
+		<!-- 	VM de actualización, metodo post para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />	
+		
+			<log message="Proyecto Negocio UPDATE==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.param1}"></log>
+			
+			<setHeader headerName="param1"><jsonpath>$.object.param1</jsonpath></setHeader>
+			<setHeader headerName="param2"><jsonpath>$.object.param2</jsonpath></setHeader>
+			<setHeader headerName="param3"><jsonpath>$.object.param3</jsonpath></setHeader>
+			<log message="***********jsonvalue: ${headers.jsonvalue}"></log>
+		    <to uri="sql:{{sql.actualiza}}" />
+			<to uri="velocity:velocity/response-valid.vm"/>
+			
+		<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+#end	
+#if ( $operacion == "DELETE")
+		<!-- 	VM de eliminación, metodo post para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />
+			
+			<log message="Proyecto Negocio DELETE==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.param1}"></log>
+
+		    <to uri="sql:{{sql.elimina}}" />
+			<to uri="velocity:velocity/response-valid.vm"/>
+			
+		<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+#end
+#if ( $operacion == "DEFAULT")
+		<!-- 	VM de consulta para una lista de registros	 -->
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />	
+			
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:{{sql.respuestaLista}}" />
+
+					<choice>
+						<when>
+							<simple>${body.size} == 0</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/listaRespuesta-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+	
+		<!-- 	VM de consulta para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:{{sql.respuesta}}?outputType=SelectOne" />
+
+					<choice>
+						<when>
+							<simple>${body} == null</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/respuesta-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>			
+
+		<!-- 	VM de inserción, metodo post para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />	
+	
+			<log message="Proyecto Negocio INSERT==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.param1}"></log>
+			
+			<setHeader headerName="param1"><jsonpath>$.object.param1</jsonpath></setHeader>
+			<setHeader headerName="param2"><jsonpath>$.object.param2</jsonpath></setHeader>
+			<setHeader headerName="param3"><jsonpath>$.object.param3</jsonpath></setHeader>
+			<log message="***********jsonvalue: ${headers.jsonvalue}"></log>
+			
+		    <to uri="sql:{{sql.inserta}}" />
+		    
+		    <to uri="velocity:velocity/response-valid.vm"/>
+		    <setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		    
+		</route>	
+
+		<!-- 	VM de actualización, metodo post para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />	
+		
+			<log message="Proyecto Negocio UPDATE==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.param1}"></log>
+			
+			<setHeader headerName="param1"><jsonpath>$.object.param1</jsonpath></setHeader>
+			<setHeader headerName="param2"><jsonpath>$.object.param2</jsonpath></setHeader>
+			<setHeader headerName="param3"><jsonpath>$.object.param3</jsonpath></setHeader>
+			<log message="***********jsonvalue: ${headers.jsonvalue}"></log>
+		    <to uri="sql:{{sql.actualiza}}" />
+			<to uri="velocity:velocity/response-valid.vm"/>
+			
+		<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+
+		<!-- 	VM de eliminación, metodo post para un registro	 -->	
+		<route id="${nombreRuta}">
+			<from uri="direct-vm:${endPointService}" />
+			
+			<log message="Proyecto Negocio DELETE==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.param1}"></log>
+
+		    <to uri="sql:{{sql.elimina}}" />
+			<to uri="velocity:velocity/response-valid.vm"/>
+			
+		<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+#end
+	</camelContext>
+</beans>

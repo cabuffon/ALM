@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring" id="api-corporativo-auditoria-1100-v1-rest">
+	
+	<onException>
+		    <exception>java.lang.Exception</exception>
+		    <handled><simple>true</simple></handled>
+		    <setHeader headerName="codeError"><constant>500</constant></setHeader>
+		    <setHeader headerName="messageError"><simple>Internal Error - ${exception.message}</simple></setHeader>
+		    <to uri="velocity:velocity/sqlException-json.vm"/>
+	</onException>
+		
+	
+#if ( $webServices == "SOAP")	
+	<cxf:cxfEndpoint id="serviceEndpoint" address="http://supereduc/${endPointService}"
+
+	</cxf:cxfEndpoint>
+	<route>
+         <from uri="cxf:bean:routerEndpoint" />
+         <to uri="cxf:bean:serviceEndpoint" />
+    </route>
+#end
+#if ( $webServices == "REST")
+		<restConfiguration bindingMode="off" component="servlet">
+			<endpointProperty key="servletName" value="${artifactId}Servlet"></endpointProperty>
+		</restConfiguration>
+
+		<rest path="/">
+			#if ( $method == "GET")
+			<get uri="${endPointService}/{param1}">
+				<to uri="direct:${endPointService}" />
+			</get>
+			#end
+			#if ( $method == "POST")
+			<post uri="${endPointService}">
+				<to uri="direct:${endPointService}" />
+			</post>
+			#end
+		</rest>
+
+		<route id="${nombreRuta}">
+			<from uri="direct:${endPointService}" />
+			<convertBodyTo type="java.lang.String" />
+
+			<to uri="direct-vm:${endPointServiceVM}" />
+			<log message="Proyecto expositor - body: ${body}"></log>
+		</route>
+#end	
+
+
+#if ( $webServices == "DEFAULT")	
+
+		<restConfiguration bindingMode="off" component="servlet">
+			<endpointProperty key="servletName" value="${artifactId}Servlet"></endpointProperty>
+		</restConfiguration>	
+
+		<rest path="/">
+			#if ( $method == "GET")
+			<get uri="${endPointService}/{param1}">
+				<to uri="direct:${endPointService}" />
+			</get>
+			#end
+			#if ( $method == "POST")
+			<post uri="${endPointService}">
+				<to uri="direct:${endPointService}" />
+			</post>
+			#end
+		</rest>
+
+		<route id="${nombreRuta}">
+			<from uri="direct:${endPointService}" />
+			<convertBodyTo type="java.lang.String" />
+
+			<to uri="direct-vm:${endPointServiceVM}" />
+			<log message="Proyecto expositor - body: ${body}"></log>
+		</route>
+#end
+	</camelContext>
+</beans>

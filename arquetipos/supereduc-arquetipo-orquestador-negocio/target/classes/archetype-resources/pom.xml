@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+  	<groupId>${groupId}</groupId>
+  	<artifactId>${artifactId}</artifactId>
+  	<version>${version}</version>
+
+	<!-- WAR file -->
+	<packaging>war</packaging>
+
+	<name>Redhat - SUPEREDUC - Arquetipo Orquestador</name>
+	<description>Servicio que expone y orquesta uno o varios servicios de tipo Direct VM.</description>
+    
+	<build>
+      <plugins>
+          <plugin>
+              <groupId>org.jboss.as.plugins</groupId>
+              <artifactId>jboss-as-maven-plugin</artifactId>
+              <version>7.9.Final</version>
+          </plugin>
+      </plugins>    
+</build>
+</project>

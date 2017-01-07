@@ -1,0 +1,4 @@
+INDEX VERSION 1.129+C:\Users\Carlitros\git\redhat-supereduc-29122016\redhat-supereduc\arquetipos\.metadata\.plugins\org.eclipse.jdt.core
+3503018419.index
+2826064963.index
+509463798.index
