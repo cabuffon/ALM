@@ -1,0 +1,1 @@
+sql.inserta = insert into info.object values (:#param1, :#param2, :#param3)

@@ -1,0 +1,16 @@
+{
+ "success":true,
+ "payload":{  
+  "Consulta":{  
+  "Param1":"${body.param1}",
+  "Param2":"${body.param2}",
+  "Param3":"${body.param3}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+

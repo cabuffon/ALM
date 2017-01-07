@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="SearchDialog.ScopePart">
+		<item value="0" key="scope"/>
+	</section>
+	<section name="">
+		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
+	</section>
+	<section name="TextSearchPage">
+		<item value="6" key="HISTORY_SIZE"/>
+		<item value="false" key="CASE_SENSITIVE"/>
+		<item value="false" key="REG_EX_SEARCH"/>
+		<item value="false" key="WHOLE_WORD"/>
+		<item value="false" key="SEARCH_DERIVED"/>
+		<item value="false" key="SEARCH_IN_BINARIES"/>
+		<section name="HISTORY4">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="SELECT (CASE LEN(dbo.[003_Acta].Numero) WHEN 10 THEN SUBSTRING(CAST(dbo.[003_Acta].Numero AS VARCHAR(10)), 5, 2)" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY5">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="SELECT (CASE LEN(dbo.[003_Acta].Numero) WHEN 10 THEN SUBSTRING(CAST(dbo.[003_Acta].Numero AS VARCHAR(10)), 5, 2) WHEN 9 THEN SUBSTRING(CAST(dbo.[003_Acta].Numero AS VARCHAR(10)), 1, 2) ELSE &apos;---&apos; END) AS AnioActa, (CASE LEN(dbo.[003_Acta].Numero) WHEN 10 THEN SUBSTRING(CAST(dbo.[003_Acta].Numero AS VARCHAR(10)), 2, 2) WHEN 9 THEN SUBSTRING(CAST(dbo.[003_Acta].Numero AS VARCHAR(10)), 3, 2) ELSE &apos;---&apos; END) AS RegionActa, dbo.[003_Acta].Numero, dbo.[Actas].FechaIngreso AS FechaIngreso, (SELECT TipoPrograma FROM [dbo].[TipoPrograma] WHERE idTipoPrograma = dbo.[Actas].idTipoPrograma) AS TipoPrograma,  ( SELECT (CASE WHEN cantidadC &gt; 0 AND cantidadB &gt; 0 THEN &apos;CON OBSERVACIONES&apos; WHEN cantidadC &gt; 0 AND cantidadB = 0 THEN &apos;CON OBSERVACIONES&apos; WHEN cantidadC = 0 AND cantidadB &gt; 0 THEN &apos;B&apos; ELSE &apos;---&apos; END) AS tipoCodigo FROM ( SELECT Codigos, ((LEN(CONVERT(VARCHAR, Codigos)) - DATALENGTH(REPLACE(CONVERT(VARCHAR, Codigos), &apos;C&apos;, &apos;&apos;))) / LEN(&apos;C&apos;)) AS cantidadC, ((LEN(CONVERT(VARCHAR, Codigos)) - DATALENGTH(REPLACE(CONVERT(VARCHAR, Codigos), &apos;B&apos;, &apos;&apos;))) / LEN(&apos;B&apos;)) AS cantidadB FROM ( SELECT STUFF( (SELECT &apos;, &apos; + CAST(DC.TipoCodigo AS VARCHAR(1)) FROM [dbo].[CodigosActas] DCA, [dbo].[Codigos] DC WHERE DCA.id_Codigo = DC.id_Codigo AND DCA.idActa = dbo.[Actas].idActa FOR XML PATH (&apos;&apos;)) , 1, 1, &apos;&apos;) AS Codigos ) T) Q ) AS TipoActa,  dbo.[003_Acta].RBD, (SELECT STUFF( (SELECT &apos;, &apos; + CAST(DC.[Codigo] AS VARCHAR(10)) FROM [dbo].[CodigosActas] DCA, [dbo].[Codigos] DC WHERE DCA.id_Codigo = DC.id_Codigo AND DCA.idActa = dbo.[Actas].idActa FOR XML PATH (&apos;&apos;)) , 1, 1, &apos;&apos;)) AS SustN, dbo.obt_CodigosActasNombres([dbo].[Actas].idActa) AS nombreSustN,  dbo.EstadoExpediente(dbo.[003_Acta].ID) AS EstadoActa,  (CASE dbo.IDEstadoExpediente(dbo.[003_Acta].ID) WHEN 8 THEN &apos;Terminado&apos; WHEN 3 THEN &apos;Terminado&apos; ELSE &apos;Pendiente&apos; END) AS EstadoPendienteTerminado   FROM dbo.[003_Acta] INNER JOIN dbo.[001_Usuario] ON dbo.[003_Acta].ID_Usuario = dbo.[001_Usuario].ID INNER JOIN dbo.[006_DatosActaSIFS] ON dbo.[003_Acta].ID = dbo.[006_DatosActaSIFS].ID_Acta INNER JOIN dbo.[010_TipoProcesos] ON dbo.[003_Acta].Tipo = dbo.[010_TipoProcesos].ID INNER JOIN dbo.[Actas] ON dbo.[003_Acta].Numero = dbo.[Actas].NumeroActa AND (dbo.[Actas].Eliminado = 0) AND (dbo.[003_Acta].Eli = 0) AND (dbo.[003_Acta].ID_Usuario = dbo.[Actas].ID_Usuario) AND &apos;---&apos; &lt;&gt; ( SELECT (CASE WHEN cantidadC &gt; 0 AND cantidadB &gt; 0 THEN &apos;CON OBSERVACIONES&apos; WHEN cantidadC &gt; 0 AND cantidadB = 0 THEN &apos;CON OBSERVACIONES&apos; WHEN cantidadC = 0 AND cantidadB &gt; 0 THEN &apos;B&apos; ELSE &apos;---&apos; END) AS tipoCodigo FROM ( SELECT ((LEN(CONVERT(VARCHAR, Codigos)) - DATALENGTH(REPLACE(CONVERT(VARCHAR, Codigos), &apos;C&apos;, &apos;&apos;))) / LEN(&apos;C&apos;)) AS cantidadC, ((LEN(CONVERT(VARCHAR, Codigos)) - DATALENGTH(REPLACE(CONVERT(VARCHAR, Codigos), &apos;B&apos;, &apos;&apos;))) / LEN(&apos;B&apos;)) AS cantidadB FROM ( SELECT STUFF( (SELECT &apos;, &apos; + CAST(DC.TipoCodigo AS VARCHAR(1)) FROM [dbo].[CodigosActas] DCA, [dbo].[Codigos] DC WHERE DCA.id_Codigo = DC.id_Codigo AND DCA.idActa = dbo.[Actas].idActa FOR XML PATH (&apos;&apos;)) , 1, 1, &apos;&apos;) AS Codigos ) T) Q ) WHERE YEAR(dbo.[003_Acta].Fecha)" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="EXTENSIONS">
+			<item value="*" key="0"/>
+		</section>
+		<section name="HISTORY2">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="SELECT a.NumeroActa, a.FechaIngreso, (SELECT TipoPrograma FROM [dbo].[TipoPrograma] WHERE idTipoPrograma" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY3">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="1202-basico-administrativosPorRBD" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY0">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="api-expositor-fiscalia-procesoAdmAnual" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY1">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="&lt;setHeader headerName=&quot;id_representante&quot;&gt;&lt;jsonpath&gt;$.object.id_representante&lt;/jsonpath&gt;&lt;/setHeader&gt;" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+	</section>
+	<section name="org.eclipse.search.text.FileSearchResultPage">
+		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
+	</section>
+	<section name="Search">
+		<list key="Search.processedPageIds">
+			<item value="org.eclipse.rse.internal.files.ui.search.searchPage"/>
+			<item value="org.eclipse.search.internal.ui.text.TextSearchPage"/>
+			<item value="org.eclipse.mylyn.tasks.ui.search.page"/>
+			<item value="org.eclipse.egit.ui.commitSearchPage"/>
+			<item value="org.eclipse.jdt.ui.JavaSearchPage"/>
+			<item value="org.eclipse.wst.jsdt.ui.JavaSearchPage"/>
+			<item value="org.eclipse.pde.internal.ui.search.SearchPage"/>
+		</list>
+		<list key="Search.enabledPageIds">
+			<item value="org.eclipse.rse.internal.files.ui.search.searchPage"/>
+			<item value="org.eclipse.search.internal.ui.text.TextSearchPage"/>
+			<item value="org.eclipse.mylyn.tasks.ui.search.page"/>
+			<item value="org.eclipse.egit.ui.commitSearchPage"/>
+			<item value="org.eclipse.jdt.ui.JavaSearchPage"/>
+			<item value="org.eclipse.wst.jsdt.ui.JavaSearchPage"/>
+			<item value="org.eclipse.pde.internal.ui.search.SearchPage"/>
+		</list>
+	</section>
+	<section name="SearchDialog">
+		<item value="org.eclipse.search.internal.ui.text.TextSearchPage" key="PREVIOUS_PAGE"/>
+	</section>
+	<section name="DialogBounds_SearchDialog">
+		<item value="653" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="465" key="DIALOG_HEIGHT"/>
+		<item value="365" key="DIALOG_X_ORIGIN"/>
+		<item value="62" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>

@@ -1,0 +1,16 @@
+{
+ "success":true,
+ "payload":{  
+  "row":{  
+  "SancionPrimeraInstancia":"${body.SancionPrimeraInstancia}",
+  "MontoMulta20529":"${body.MontoMulta20529}",
+  "MontoReintegro":"${body.MontoReintegro}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+

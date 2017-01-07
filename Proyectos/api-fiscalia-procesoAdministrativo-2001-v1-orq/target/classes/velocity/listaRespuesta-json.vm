@@ -1,0 +1,33 @@
+ {
+ "success":true,
+ "payload":{
+  "rows":[
+#foreach(${item} in ${body}) 
+	  {"row":{
+	  "numeroActa":"${item.numeroActaConsulta}",
+	  "fechaIngreso":"${item.fechaIngreso}",
+	  "tipoPrograma":"${item.tipoPrograma}",
+	  "estadoActa":"${item.estadoActa}",
+	  "fiscal":"${item.fiscal}",
+	  "sancionPrimeraInstancia":"${item.sancionPrimeraInstancia}",
+	  "montoMulta20529Primera":"${item.montoMulta20529Primera}",
+	  "montoReintegroPrimera":"${item.montoReintegroPrimera}",
+	  "sancionSegundaInstancia":"${item.sancionSegundaInstancia}",
+	  "montoMulta20529Segunda":"${item.montoMulta20529Segunda}",
+	  "montoReintegroSegunda":"${item.montoReintegroSegunda}",
+	  "sancionEnLaCorte":"${item.sancionEnLaCorte}",
+	  "montoMulta20529Corte":"${item.montoMulta20529Corte}",
+	  "montoReintegroCorte":"${item.montoReintegroCorte}",
+	  "estadoActa":"${item.estadoActa}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

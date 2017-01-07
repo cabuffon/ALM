@@ -1,0 +1,15 @@
+{
+ "success":true,
+ "payload":{  
+  "ingresoPorRendicion":{  
+  "Monto2":"${body.monto}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+
+

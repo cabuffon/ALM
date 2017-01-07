@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         
+	<bean id="validaEntrada" class="cl.supereduc.rs.ValidaEntrada"/>
+	<bean id="validaEntradaRBD" class="cl.supereduc.rs.ValidaEntradaRBD"/>
+
+	<bean id="RestletComponent" class="org.restlet.Component" />
+
+	<bean id="RestletComponentService" class="org.apache.camel.component.restlet.RestletComponent">
+		<constructor-arg index="0">
+			<ref bean="RestletComponent" />
+		</constructor-arg>
+	</bean>
+	
+	<!-- Data Base Configuration Componentes -->
+	<!-- Data Source componente Bean -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+		
+		<property name="url" value="jdbc:sqlserver://sql01_desa:1433/SIPA"/>
+		
+		<property name="username" value="rendicion"/>
+		<property name="password" value="rendicion.,"/>
+		
+	    <property name="removeAbandoned" value="true" />
+	    <property name="initialSize" value="10" />
+	    <property name="maxActive" value="20" />
+	</bean>
+	
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+	  <property name="dataSource" ref="dataSource"/>
+	</bean>
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring"  id="api-fiscalia">
+
+<!-- 	202 Maestro Fiscalia Proceso Administrativo Procesos Administrativos por rbd Lectura 
+[0-25] rbd: numerico Lista<ProcesoAdministrativo>	 -->		
+		<route id="202-administrativosPorRBD">
+			<from uri="restlet:/v1/administrativos/rbd/{rbd}?restletMethod=get" />
+			
+			<to uri="bean:validaEntradaRBD" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:SELECT a.NumeroActa, a.FechaIngreso,(SELECT TipoPrograma FROM [dbo].[TipoPrograma] WHERE idTipoPrograma = a.idTipoPrograma) AS TipoPrograma,dbo.EstadoExpediente(b.ID) AS EstadoActa FROM [dbo].[Actas] a INNER JOIN [dbo].[003_Acta] b ON a.NumeroActa = b.Numero AND a.RBD = :#rbd::integer" />
+
+					<choice>
+						<when>
+							<simple>${body.size} == 0</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/listaAdministrativos-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+		
+	</camelContext>
+</beans>

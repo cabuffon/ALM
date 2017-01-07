@@ -1,0 +1,13 @@
+{
+ "success":true,
+ "payload":{  
+  "estadoPorRendicion":{  
+  "IdEstadoRendicion":"${body.ESRE_ID}",
+  "DescripcionEstadoRendicion":"${body.ESRE_DESCRIPCION}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}

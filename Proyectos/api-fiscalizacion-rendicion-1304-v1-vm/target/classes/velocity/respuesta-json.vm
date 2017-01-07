@@ -1,0 +1,13 @@
+{
+ "success":true,
+ "payload":{  
+  "gastosRechazadosPorRendicion":{  
+  "MontoRechazado":"${body}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+

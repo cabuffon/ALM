@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+        
+    <bean id="validaEntrada" class="cl.supereduc.iesb.arquetipo.negocio.rs.ValidaEntrada"/>     
+	
+
+	<!-- Data Source componente Bean -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="java:jboss/datasources/ds_info_iesb"/>
+	</bean>
+	
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+	  <property name="dataSource" ref="dataSource"/>
+	</bean>
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring" id="api-corporativo-sostenedor-1107-v1-vm">
+	
+	<propertyPlaceholder id="placeholder" location="classpath:querysArquetipoBasico.properties"/>
+	
+	<onException>
+		    <exception>java.sql.SQLException</exception>
+		    <handled><simple>true</simple></handled>
+		    <setHeader headerName="codeError"><constant>400</constant></setHeader>
+		    <setHeader headerName="messageError"><simple>Bad Request - ${exception.message}</simple></setHeader>
+		    <to uri="velocity:velocity/sqlException400-json.vm"/>
+	</onException>
+
+		<!-- 	VM de inserción, metodo post para un registro	 -->	
+		<route id="vm">
+			<from uri="direct-vm:crearSostenedor-tracking" />	
+	
+			<log message="Proyecto Negocio INSERT==============> - body: ${body}"></log>
+			<log message="param1*********************** ${headers.rut_sostenedor}"></log>
+			
+			<setHeader headerName="rut_sostenedor"><jsonpath>$.object.rut_sostenedor</jsonpath></setHeader>
+			<setHeader headerName="id_tipo_calle"><jsonpath>$.object.id_tipo_calle</jsonpath></setHeader>
+			<setHeader headerName="id_region"><jsonpath>$.object.id_region</jsonpath></setHeader>
+			<setHeader headerName="id_comuna"><jsonpath>$.object.id_comuna</jsonpath></setHeader>
+			<setHeader headerName="id_tipo_persona"><jsonpath>$.object.id_tipo_persona</jsonpath></setHeader>
+			<setHeader headerName="dv_sostenedor"><jsonpath>$.object.dv_sostenedor</jsonpath></setHeader>
+			<setHeader headerName="nombre_sostenedor"><jsonpath>$.object.nombre_sostenedor</jsonpath></setHeader>
+			<setHeader headerName="telefono_fijo"><jsonpath>$.object.telefono_fijo</jsonpath></setHeader>
+			<setHeader headerName="telefono_movil"><jsonpath>$.object.telefono_movil</jsonpath></setHeader>
+			<setHeader headerName="email"><jsonpath>$.object.email</jsonpath></setHeader>
+			<setHeader headerName="email_dos"><jsonpath>$.object.email_dos</jsonpath></setHeader>
+			<setHeader headerName="email_tres"><jsonpath>$.object.email_tres</jsonpath></setHeader>
+			<setHeader headerName="direccion"><jsonpath>$.object.direccion</jsonpath></setHeader>
+			<setHeader headerName="numero"><jsonpath>$.object.numero</jsonpath></setHeader>
+			<setHeader headerName="clave"><jsonpath>$.object.clave</jsonpath></setHeader>
+			<setHeader headerName="dependencia"><jsonpath>$.object.dependencia</jsonpath></setHeader>
+			<setHeader headerName="vigente"><jsonpath>$.object.vigente</jsonpath></setHeader>
+			<setHeader headerName="fuente"><jsonpath>$.object.fuente</jsonpath></setHeader>
+			<setHeader headerName="usuario_creador"><jsonpath>$.object.usuario_creador</jsonpath></setHeader>
+			<setHeader headerName="usuario_modificador"><jsonpath>$.object.usuario_modificador</jsonpath></setHeader>
+			
+			<log message="***********jsonvalue: ${headers.jsonvalue}"></log>
+			
+		    <to uri="sql:{{sql.inserta}}" />
+		    
+		    <to uri="velocity:velocity/response-valid.vm"/>
+		    <setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		    
+		</route>	
+
+	</camelContext>
+</beans>

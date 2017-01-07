@@ -1,0 +1,22 @@
+ {
+ "success":true,
+ "payload":{
+  "rows":[
+#foreach(${item} in ${body}) 
+	  {"row":{
+	  "EstadoActa":"${item.EstadoActa}",
+	  "EstadoActa":"${item.EstadoActa}",
+	  "EstadoActa":"${item.EstadoActa}",
+	  "EstadoActa":"${item.EstadoActa}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

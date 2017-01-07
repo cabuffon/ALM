@@ -1,0 +1,16 @@
+{
+ "success":true,
+ "payload":{  
+  "fiscalizadorPorNombreUsuario":{  
+  "Id":"${body.id}",
+  "Nombre":"${body.nombre}",
+  "NombreUsuario":"${body.nombreUsuario}",
+  "Region":"${body.region}",
+  "Imei":"${body.imei}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}

@@ -1,0 +1,22 @@
+ {
+ "success":true,
+ "payload":{
+  "administrativos":[
+#foreach(${item} in ${body}) 
+	  {"administrativo":{
+	  "NumeroActa":"${item.NumeroActa}",
+	  "FechaIngreso":"${item.FechaIngreso}",
+	  "TipoPrograma":"${item.TipoPrograma}",
+	  "EstadoActa":"${item.EstadoActa}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

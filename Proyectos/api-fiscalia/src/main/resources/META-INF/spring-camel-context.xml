@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	
+	<bean id="validaEntradaRBD" class="cl.supereduc.iesb.fiscalia.rs.ValidaEntradaRBD"/>
+<!-- 	<bean id="RestletComponent" class="org.restlet.Component" /> -->
+
+	<!-- Data Source componente Bean -->
+<!-- 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> -->
+<!--     	<property name="jndiName" value="java:jboss/datasources/ds_sipa_iesb"/> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent"> -->
+<!-- 	  <property name="dataSource" ref="dataSource"/> -->
+<!-- 	</bean> -->
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring"  id="api-fiscalia-v2">
+	
+<!-- 	<propertyPlaceholder id="placeholder" location="classpath:querysApiFiscalia.properties"/> -->
+	
+<!-- 	202 Maestro Fiscalia Proceso Administrativo Procesos Administrativos por rbd Lectura 
+[0-25] rbd: numerico Lista<ProcesoAdministrativo>	 -->		
+		<route id="202-administrativosPorRBD">
+<!-- 			<from uri="restlet:/v1/administrativos/rbd/{rbd}?restletMethod=get" /> -->
+			<from uri="direct-vm:fiscalia-tracking"/>
+			
+			<log message="====================================>*****rbd: ${headers.rbd}"></log>
+			
+			<to uri="bean:validaEntradaRBD" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+						<!-- TODO, cabuffon, descomentar implementación final -->
+<!-- 		    		<to uri="sql:{{sql.administrativosPorRBD}}" /> -->
+<!-- 					<choice> -->
+<!-- 						<when> -->
+<!-- 							<simple>${body.size} == 0</simple> -->
+<!-- 							<to uri="velocity:velocity/response-json.vm"/> -->
+<!-- 						</when> -->
+<!-- 						<otherwise> -->
+<!-- 							<log message="body: ${body}"></log> -->
+<!-- 							<to uri="velocity:velocity/listaAdministrativos-json.vm"/> -->
+<!-- 						</otherwise> -->
+<!-- 					</choice> -->
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+			
+			<!-- TODO, cabuffon, quitar invocación velocity implementación final -->
+			<to uri="velocity:velocity/response-json.vm"/>
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+		
+	</camelContext>
+</beans>

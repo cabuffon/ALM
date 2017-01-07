@@ -1,0 +1,25 @@
+ {
+ "success":true,
+ "payload":{
+  "establecimientos":[
+#foreach(${item} in ${body}) 
+	  {"establecimiento":{
+	  "rbd":"${item.rbd}",
+	  "nombreEstablecimiento":"${item.nombreEsta}",
+	  "convenioSEP":"${item.convenioSEP}",
+	  "convenioPIE":"${item.convenioPIE}",
+	  "idEstadoGlosa":"${item.idEstadoGlosa}",
+	  "idDependenciaGlosa":"${item.idDependenciaGlosa}",
+	  "telefonoEstablecimiento":"${item.telefonoEsta}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

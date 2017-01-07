@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         
+	<bean id="validaEntrada" class="cl.supereduc.iesb.maestro.rs.ValidaEntrada"/>
+	<bean id="validaEntradaRBD" class="cl.supereduc.iesb.maestro.rs.ValidaEntradaRBD"/>
+	
+	<!-- Data Source componente Bean -->
+<!-- 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> -->
+<!--     	<property name="jndiName" value="java:jboss/datasources/ds_info_iesb"/> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent"> -->
+<!-- 	  <property name="dataSource" ref="dataSource"/> -->
+<!-- 	</bean> -->
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring"  id="api-maestro">
+	
+		<propertyPlaceholder id="placeholder" location="classpath:querysApiMaestro.properties"/>
+
+<!-- 	111 Maestro Corporativo Establecimientos por rut de sostenedor Lectura [0-136] rut: numerico
+Lista<Establecimiento>	 -->		
+		<route id="111-establecimientosPorRutSostenedor">
+<!-- 			<from uri="restlet:/v1/establecimientos/rut/{rutSostenedor}?restletMethod=get" /> -->
+			<from uri="direct-vm:maestro-establecimientosPorRutSostenedor-tracking"/>
+			
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+					<!-- TODO, cabuffon, descomentar implementación final -->
+<!-- 					<to uri="sql:{{sql.establecimientosPorRutSostenedor}}" /> -->
+<!-- 					<choice> -->
+<!-- 						<when> -->
+<!-- 							<simple>${body.size} == 0</simple> -->
+<!-- 							<to uri="velocity:velocity/response-json.vm"/> -->
+<!-- 						</when> -->
+<!-- 						<otherwise> -->
+<!-- 							<log message="body: ${body}"></log> -->
+<!-- 							<to uri="velocity:velocity/listaEstablecimientos-json.vm"/> -->
+<!-- 						</otherwise> -->
+<!-- 					</choice> -->
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<!-- TODO, cabuffon, quitar invocación velocity implementación final -->
+			<to uri="velocity:velocity/response-json.vm"/>
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+		
+<!-- 	110 Maestro Corporativo Establecimientos por rbd Lectura [0-1] rbd: numerico Establecimiento	 -->
+		<route id="110-establecimientosPorRbd">
+<!-- 			<from uri="restlet:/v1/establecimientos/rbd/{rbd}?restletMethod=get" /> -->
+				<from uri="direct-vm:maestro-establecimientosPorRbd-tracking"/>
+			
+			<to uri="bean:validaEntradaRBD" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+					<!-- TODO, cabuffon, descomentar implementación final -->
+<!-- 		    		<to uri="sql:{{sql.establecimientosPorRbd}}?outputType=SelectOne" /> -->
+
+<!-- 					<choice> -->
+<!-- 						<when> -->
+<!-- 							<simple>${body} == null</simple> -->
+<!-- 							<to uri="velocity:velocity/response-json.vm"/> -->
+<!-- 						</when> -->
+<!-- 						<otherwise> -->
+<!-- 							<log message="body: ${body}"></log> -->
+<!-- 							<to uri="velocity:velocity/establecimientoPorRBD-json.vm"/> -->
+<!-- 						</otherwise> -->
+<!-- 					</choice> -->
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<!-- TODO, cabuffon, quitar invocación velocity implementación final -->
+			<to uri="velocity:velocity/response-json.vm"/>
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>	
+		
+<!-- 	119 Maestro Corporativo Representante Legal Representantes Legales por rut de sostenedor Lectura [0-3]
+rut: numerico Lista<RepresenteLegal>	 -->
+
+		<route id="119-representantesPorRutSostenedor">
+<!-- 			<from uri="restlet:/v1/representantes/rut/{rutSostenedor}?restletMethod=get" /> -->
+			<from uri="direct-vm:maestro-representantesPorRutSostenedor-tracking"/>
+			
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+					<!-- TODO, cabuffon, descomentar implementación final -->
+<!-- 					<to uri="sql:{{sql.representantesPorRutSostenedor}}" /> -->
+
+<!-- 					<choice> -->
+<!-- 						<when> -->
+<!-- 							<simple>${body.size} == 0</simple> -->
+<!-- 							<to uri="velocity:velocity/response-json.vm"/> -->
+<!-- 						</when> -->
+<!-- 						<otherwise> -->
+<!-- 							<log message="body: ${body}"></log> -->
+<!-- 							<to uri="velocity:velocity/listaRepresentantes-json.vm"/> -->
+<!-- 						</otherwise> -->
+<!-- 					</choice> -->
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<!-- TODO, cabuffon, quitar invocación velocity implementación final -->
+			<to uri="velocity:velocity/response-json.vm"/>
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>		
+		
+<!-- 	103 Maestro Corporativo Sostenedor Sostenedor por rut Lectura [0-1] rut: numerico Sostenedor	 -->
+		<route id="103-sostenedorPorRut">
+<!-- 			<from uri="restlet:/v1/sostenedores/rut/{rutSostenedor}?restletMethod=get" /> -->
+			<from uri="direct-vm:maestro-sostenedorPorRut-tracking"/>
+			
+			<to uri="bean:validaEntrada" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+						<!-- TODO, cabuffon, descomentar implementación final -->
+<!-- 		    		<to uri="sql:{{sql.sostenedorPorRut}}?outputType=SelectOne" /> -->
+
+<!-- 					<choice> -->
+<!-- 						<when> -->
+<!-- 							<simple>${body} == null</simple> -->
+<!-- 							<to uri="velocity:velocity/response-json.vm"/> -->
+<!-- 						</when> -->
+<!-- 						<otherwise> -->
+<!-- 							<log message="body: ${body}"></log> -->
+<!-- 							<to uri="velocity:velocity/sostenedorPorRut-json.vm"/> -->
+<!-- 						</otherwise> -->
+<!-- 					</choice> -->
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<!-- TODO, cabuffon, quitar invocación velocity implementación final -->
+			<to uri="velocity:velocity/response-json.vm"/>
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>				
+		
+	</camelContext>
+</beans>

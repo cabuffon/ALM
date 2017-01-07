@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="true" key="J2EE_EXPORT_OVERWRITE"/>
+	<item value="false" key="J2EE_EXPORT_SOURCE"/>
+	<list key="J2EE_EXPORT_JST_WEB">
+		<item value="D:\jboss-eap-6.4.0\jboss-eap-6.4\standalone\deployments\api-fiscalia-procesoAdministrativo-1202-v1-rest.war"/>
+		<item value="D:\jboss-eap-6.4.0\jboss-eap-6.4\standalone\deployments\api-fiscalia-procesoAdministrativo-1202-v1-vm.war"/>
+		<item value="D:\jboss-eap-6.4.0\jboss-eap-6.4\standalone\deployments\api-fiscalia-procesoAdministrativo-2001-v1-rest.war"/>
+		<item value="D:\jboss-eap-6.4.0\jboss-eap-6.4\standalone\deployments\api-fiscalia-procesoAdministrativo-2001-v1-orq.war"/>
+		<item value="D:\jboss-eap-6.4.0\jboss-eap-6.4\standalone\deployments\api-fiscalia-procesoAdministrativo-2001-v1-vm.war"/>
+		<item value="D:\jboss-eap-6.4.0\jboss-eap-6.4\standalone\deployments\api-corporativo-sostenedor-1106-v1-rest.war"/>
+	</list>
+</section>

@@ -1,0 +1,15 @@
+{
+ "success":true,
+ "payload":{  
+  "gastosPorRendicion":{  
+  "Monto":"${body}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+
+

@@ -1,0 +1,20 @@
+{
+ "success":true,
+ "payload":{
+  "provincias":[
+#foreach(${item} in ${body}) 
+	  {"provincia":{
+	  "IdProvincia":"${item.id_provincia}",
+	  "Nombre":"${item.nombre}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

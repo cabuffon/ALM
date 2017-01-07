@@ -1,0 +1,20 @@
+{
+ "success":true,
+ "payload":{  
+  "atencionCas":{  
+  "Rut":"${body.FechaCreacion}",
+  "Nombre":"${body.numeroAtencion}",
+  "Paterno":"${body.Tema}",
+  "Materno":"${body.RUN}",
+  "FechaNacimiento":"${body.Ciudadano}",
+  "FechaDefuncion":"${body.Canal}",
+  "EstadoCivil":"${body.Responsable}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+

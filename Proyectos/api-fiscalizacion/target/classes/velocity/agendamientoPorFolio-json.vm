@@ -1,0 +1,21 @@
+{
+ "success":true,
+ "payload":{  
+  "Agendamiento":{  
+  "rbd":"${body.rbd}",
+  "Nombre":"${body.nombre}",
+  "NomRegion":"${body.nombreRegion}",
+  "Dependencia":"${body.dependencia}",
+  "Financiamiento":"${body.financiamiento}",
+  "Fecha":"${body.fecha}",
+  "Estado":"${body.estado}",
+  "Folio":"${body.folio}"
+ }
+},
+ "return":{  
+  "code":"000",
+  "message":"OK"
+ }
+}
+
+

@@ -1,0 +1,20 @@
+{
+ "success":true,
+ "payload":{
+  "historialDeEstadoPorRendicion":[
+#foreach(${item} in ${body}) 
+	  {"historialDeEstadoPorRendicion":{
+	  "IdEstadoRendicion":"${item.ESRE_ID}",
+	  "DescripcionEstadoRendicion":"${item.ESRE_DESCRIPCION}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

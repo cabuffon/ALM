@@ -1,0 +1,26 @@
+ {
+ "success":true,
+ "payload":{
+  "agendamientos":[
+#foreach(${item} in ${body}) 
+	  {"agendamiento":{
+	  "rbd":"${item.rbd}",
+	  "Nombre":"${item.nombre}",
+	  "NombreRegion":"${item.nombreRegion}",
+	  "Dependencia":"${item.dependencia}",
+	  "Financiamiento":"${item.financiamiento}",
+	  "Fecha":"${item.fecha}",
+	  "Estado":"${item.estado}",
+	  "Folio":"${item.folio}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	
+#end
+]},
+  "return":{  
+   "code":"000",
+   "message":"OK"
+  }
+}

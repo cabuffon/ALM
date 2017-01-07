@@ -1,0 +1,12 @@
+{
+ "success":true,
+ "payload":{  
+  "row":{  
+  "EstadoActa":"${body}",
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}

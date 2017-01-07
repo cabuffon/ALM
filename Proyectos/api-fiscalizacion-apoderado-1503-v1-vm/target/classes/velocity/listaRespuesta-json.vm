@@ -1,0 +1,29 @@
+{
+ "success":true,
+ "payload":{
+  "apoderadosPorTitular":[
+#foreach(${item} in ${body}) 
+	  {"apoderadoPorTitular":{
+	  "IdApoderado":"${item.id_apoderado}",
+	  "IdCuentaBancaria":"${item.id_cuenta_bancaria}",
+	  "IdTitular":"${item.id_titular}",
+	  "RutApoderado":"${item.rut_apoderado}",
+	  "DvApoderado":"${item.dv_apoderado}",
+	  "NombreApoderado":"${item.nombre_apoderado}",
+	  "PaternoApoderado":"${item.paterno_apoderado}",
+	  "MaternoApoderado":"${item.materno_apoderado}",
+	  "FechaInicio":"${item.fecha_inicio}",
+	  "FechaTermino":"${item.fecha_termino}",
+	  "Vigencia":"${item.vigencia}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

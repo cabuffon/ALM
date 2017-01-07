@@ -1,0 +1,29 @@
+ {
+ "success":true,
+ "payload":{
+  "establecimientos":[
+#foreach(${item} in ${body}) 
+	  {"establecimiento":{
+	  "Rbd":"${item.rbd}",
+	  "NombreEsta":"${item.nombre_esta}",
+	  "Dependencia":"${item.dependencia}",
+	  "Region":"${item.region}",
+	  "Comuna":"${item.comuna}",
+	  "Estado":"${item.estado}",
+	  "RutSostenedor":"${item.rut_sostenedor}",
+	  "DireccionEsta":"${item.direccion_esta}",
+	  "TelefonoEsta":"${item.telefono_esta}",
+	  "MailEsta":"${item.mail_esta}",
+	  "Fuente":"${item.fuente}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

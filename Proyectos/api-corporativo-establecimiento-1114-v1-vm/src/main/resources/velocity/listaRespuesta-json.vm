@@ -1,0 +1,24 @@
+{
+ "success":true,
+ "payload":{
+  "establecimientosPorDependencia":[
+#foreach(${item} in ${body}) 
+	  {"establecimientoPorDependencia":{
+	  "RBD":"${item.rbd}",
+	  "NombreEstablecimiento":"${item.nombre_esta}",
+	  "RutSostenedor":"${item.rut_sostenedor}",
+	  "DireccionEstablecimiento":"${item.direccion_esta}",
+	  "TelefonoEstablecimiento":"${item.telefono_esta}",
+	  "EmailEstablecimiento":"${item.mail_esta}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

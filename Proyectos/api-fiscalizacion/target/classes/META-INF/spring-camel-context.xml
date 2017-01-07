@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         
+    <bean id="validaEntradaFolio" class="cl.supereduc.iesb.fiscalizacion.rs.ValidaEntradaFolio"/>     
+	<bean id="validaEntradaRBD" class="cl.supereduc.iesb.fiscalizacion.rs.ValidaEntradaRBD"/>
+
+	<!-- Data Source componente Bean -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="java:jboss/datasources/ds_sife_iesb"/>
+	</bean>
+	
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+	  <property name="dataSource" ref="dataSource"/>
+	</bean>
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring"  id="api-fiscalizacion">
+	
+	<propertyPlaceholder id="placeholder" location="classpath:querysApiFiscalizacion.properties"/>
+
+<!-- 	1402 Maestro Fiscalización Agendamiento Agendamientos por rbd Lectura [0-25]
+rbd: numerico Lista<Agendamiento>	 -->		
+		<route id="1402-agendamientosPorRBD">
+			<from uri="direct-vm:fiscalizacion-agendamientosPorRBD-tracking"/>
+			
+			<to uri="bean:validaEntradaRBD" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:{{sql.agendamientosPorRBDLocal}}" />
+
+					<choice>
+						<when>
+							<simple>${body.size} == 0</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/listaAgendamientos-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+		
+<!-- 	1405 Maestro Fiscalización Agendamiento Agendamiento por folio Lectura [0-1] folio: numerico Agendamiento	 -->
+		<route id="1405-agendamientoPorFolio">
+			<from uri="direct-vm:fiscalizacion-agendamientoPorFolio-tracking"/>
+			
+			<to uri="bean:validaEntradaFolio" />
+			
+			<choice>
+				<when>
+					<simple>${body} == true</simple>
+		    		<to uri="sql:{{sql.agendamientoPorFolioLocal}}?outputType=SelectOne" />
+
+					<choice>
+						<when>
+							<simple>${body} == null</simple>
+							<to uri="velocity:velocity/response-json.vm"/>
+						</when>
+						<otherwise>
+							<log message="body: ${body}"></log>
+							<to uri="velocity:velocity/agendamientoPorFolio-json.vm"/>
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise>
+					<to uri="velocity:velocity/response-json.vm"/>
+				</otherwise>
+			</choice>
+
+			<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>			
+		
+	</camelContext>
+</beans>

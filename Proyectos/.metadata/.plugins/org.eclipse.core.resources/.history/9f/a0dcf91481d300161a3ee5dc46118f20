@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+        
+    <bean id="validaEntrada" class="cl.supereduc.iesb.arquetipo.negocio.rs.ValidaEntrada"/>     
+	
+
+	<!-- Data Source componente Bean -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    	<property name="jndiName" value="java:jboss/datasources/ds_info_iesb"/>
+	</bean>
+	
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+	  <property name="dataSource" ref="dataSource"/>
+	</bean>
+	 
+	<camelContext xmlns="http://camel.apache.org/schema/spring" id="api-corporativo-sostenedor-1108-v1-vm">
+	
+	<propertyPlaceholder id="placeholder" location="classpath:querysArquetipoBasico.properties"/>
+	
+	<onException>
+		    <exception>java.sql.SQLException</exception>
+		    <handled><simple>true</simple></handled>
+		    <setHeader headerName="codeError"><constant>400</constant></setHeader>
+		    <setHeader headerName="messageError"><simple>Bad Request - ${exception.message}</simple></setHeader>
+		    <to uri="velocity:velocity/sqlException400-json.vm"/>
+	</onException>
+
+		<!-- 	VM de actualización, metodo post para un registro	 -->	
+		<route id="vm">
+			<from uri="direct-vm:actualizarSostenedor-tracking" />	
+		
+			<log message="Proyecto Negocio UPDATE==============> - body: ${body}"></log>
+			
+<!-- 			{"object":{ -->
+<!-- 			"id_tipo_calle":"1", -->
+<!-- 			"id_region":"1", -->
+<!-- 			"id_comuna":"1101", -->
+<!-- 			"id_tipo_persona":"1", -->
+<!-- 			"dv_sostenedor":"2", -->
+<!-- 			"nombre_sostenedor":"Olimpo", -->
+<!-- 			"telefono_fijo":"22324543", -->
+<!-- 			"telefono_movil":"23423423", -->
+<!-- 			"email":"alo@live.com", -->
+<!-- 			"email_dos":"alo@live.com", -->
+<!-- 			"email_tres":"alo@live.com", -->
+<!-- 			"direccion":"aaa", -->
+<!-- 			"numero":"234", -->
+<!-- 			"clave":"12", -->
+<!-- 			"dependencia":"1", -->
+<!-- 			"vigente":"1", -->
+<!-- 			"fecha_modificacion":"", -->
+<!-- 			"fuente":"asd", -->
+<!-- 			"usuario_creador":"1", -->
+<!-- 			"usuario_modificador":"2", -->
+<!-- 			"rut_sostenedor":"12307818"}} -->
+			
+<!-- 			UPDATE info.sostenedor SET  -->
+<!-- 			id_tipo_calle=:#id_tipo_calle::integer,  -->
+<!-- 			id_region=:#id_region::integer,  -->
+<!-- 			id_comuna=:#id_comuna::integer,  -->
+<!-- 			id_tipo_persona=:#id_tipo_persona::integer,  -->
+<!-- 			dv_sostenedor=:#dv_sostenedor,  -->
+<!-- 			nombre_sostenedor=:#nombre_sostenedor,  -->
+<!-- 			telefono_fijo=:#telefono_fijo,  -->
+<!-- 			telefono_movil=:#telefono_movil,  -->
+<!-- 			email=:#email,  -->
+<!-- 			email_dos=:#email_dos,  -->
+<!-- 			email_tres=:#email_tres,  -->
+<!-- 			direccion=:#direccion,  -->
+<!-- 			numero=:#numero,  -->
+<!-- 			clave=:#clave,  -->
+<!-- 			dependencia=:#dependencia::integer,  -->
+<!-- 			vigente=:#vigente::integer,  -->
+<!-- 			fecha_modificacion=:#fecha_modificacion::timestamp,  -->
+<!-- 			fuente=:#fuente,  -->
+<!-- 			usuario_creador=:#usuario_creador::integer,  -->
+<!-- 			usuario_modificador=:#usuario_modificador::integer  -->
+<!-- 			WHERE rut_sostenedor = :#rut_sostenedor::integer -->
+			
+			<setHeader headerName="id_tipo_calle"><jsonpath>$.object.id_tipo_calle</jsonpath></setHeader>
+			<setHeader headerName="id_region"><jsonpath>$.object.id_region</jsonpath></setHeader>
+			<setHeader headerName="id_comuna"><jsonpath>$.object.id_comuna</jsonpath></setHeader>
+			<setHeader headerName="id_tipo_persona"><jsonpath>$.object.id_tipo_persona</jsonpath></setHeader>
+			<setHeader headerName="dv_sostenedor"><jsonpath>$.object.dv_sostenedor</jsonpath></setHeader>
+			<setHeader headerName="nombre_sostenedor"><jsonpath>$.object.nombre_sostenedor</jsonpath></setHeader>
+			<setHeader headerName="telefono_fijo"><jsonpath>$.object.telefono_fijo</jsonpath></setHeader>
+			<setHeader headerName="telefono_movil"><jsonpath>$.object.telefono_movil</jsonpath></setHeader>
+			<setHeader headerName="email"><jsonpath>$.object.email</jsonpath></setHeader>
+			<setHeader headerName="email_dos"><jsonpath>$.object.email_dos</jsonpath></setHeader>
+			<setHeader headerName="email_tres"><jsonpath>$.object.email_tres</jsonpath></setHeader>
+			<setHeader headerName="direccion"><jsonpath>$.object.direccion</jsonpath></setHeader>
+			<setHeader headerName="numero"><jsonpath>$.object.numero</jsonpath></setHeader>
+			<setHeader headerName="clave"><jsonpath>$.object.clave</jsonpath></setHeader>
+			<setHeader headerName="dependencia"><jsonpath>$.object.dependencia</jsonpath></setHeader>
+			<setHeader headerName="vigente"><jsonpath>$.object.vigente</jsonpath></setHeader>
+			<setHeader headerName="fecha_modificacion"><jsonpath>$.object.fecha_modificacion</jsonpath></setHeader>
+			<setHeader headerName="fuente"><jsonpath>$.object.fuente</jsonpath></setHeader>
+			<setHeader headerName="usuario_creador"><jsonpath>$.object.usuario_creador</jsonpath></setHeader>
+			<setHeader headerName="usuario_modificador"><jsonpath>$.object.usuario_modificador</jsonpath></setHeader>
+			<setHeader headerName="rut_sostenedor"><jsonpath>$.object.rut_sostenedor</jsonpath></setHeader>
+
+			
+			<log message="***********id_tipo_calle: ${headers.id_tipo_calle}"></log>
+		    <to uri="sql:{{sql.actualiza}}" />
+			<to uri="velocity:velocity/response-valid.vm"/>
+			
+		<setHeader headerName="Content-Type"><constant>application/json</constant></setHeader>
+		</route>
+	</camelContext>
+</beans>

@@ -1,0 +1,20 @@
+{
+ "success":true,
+ "payload":{
+  "regiones":[
+#foreach(${item} in ${body}) 
+	  {"region":{
+	  "IdRegion":"${item.id_region}",
+	  "Nombre":"${item.nombre}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	  
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}

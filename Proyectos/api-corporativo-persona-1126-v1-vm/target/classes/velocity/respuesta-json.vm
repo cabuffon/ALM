@@ -1,0 +1,21 @@
+{
+ "success":true,
+ "payload":{  
+  "persona":{  
+  "Rut":"${body.rut}",
+  "Nombre":"${body.nombre}",
+  "Paterno":"${body.paterno}",
+  "Materno":"${body.materno}",
+  "FechaNacimiento":"${body.fecha_nacimiento}",
+  "FechaDefuncion":"${body.fecha_defuncion}",
+  "EstadoCivil":"${body.estado_civil}",
+  "Sexo":"${body.sexo}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+

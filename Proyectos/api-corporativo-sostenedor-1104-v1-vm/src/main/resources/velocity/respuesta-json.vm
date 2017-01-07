@@ -1,0 +1,19 @@
+{
+ "success":true,
+ "payload":{  
+  "representanteLegalPorRut":{  
+  "RutSostenedor":"${body.rut_sostenedor}",
+  "NombreSostenedor":"${body.nombre_sostenedor}",
+  "TelefonoFijo":"${body.telefono_fijo}",
+  "TelefonoMovil":"${body.telefono_movil}",
+  "Email":"${body.email}",
+  "Fuente":"${body.fuente}"
+ }
+},
+ "return":{  
+  "code":"200",
+  "message":"OK"
+ }
+}
+
+

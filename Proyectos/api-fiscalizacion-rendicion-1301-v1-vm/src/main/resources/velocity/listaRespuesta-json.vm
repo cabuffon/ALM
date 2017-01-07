@@ -1,0 +1,23 @@
+SELECT e.ESTA_RBD, s.subvencion_alias, s.TPSU_DESCRIPCION, es.anio FROM tb_establecimiento_subvencion es INNER JOIN tipo_subvencion s ON es.fk_subvencion = s.TPSU_ID INNER JOIN establecimiento e ON e.ESTA_ID = es.fk_establecimiento WHERE es.fk_establecimiento = (SELECT ESTA_ID FROM establecimiento WHERE ESTA_RBD = '2') AND es.anio = 2015 ORDER BY es.anio, s.subvencion_alias 
+ {
+ "success":true,
+ "payload":{
+  "rendicionesPorEstablecimiento":[
+#foreach(${item} in ${body}) 
+	  {"rendicionPorEstablecimiento":{
+	  "EstablecimientoRBD":"${item.ESTA_RBD}",
+	  "Subvencion":"${item.subvencion_alias}",
+	  "TpsuDescripcion":"${item.TPSU_DESCRIPCION}",
+	  "Año":"${item.anio}"
+#if(( $foreach.hasNext ) )
+  }},
+#{else}
+  }}
+#end	
+#end
+]},
+  "return":{  
+   "code":"200",
+   "message":"OK"
+  }
+}
