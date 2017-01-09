@@ -1,8 +1,0 @@
-{  
-   "success":true,
-   "payload":null,
-   "return":{  
-      "code":"200",
-      "message":"Transaccion Realizada Correctamente"
-   }
-}
